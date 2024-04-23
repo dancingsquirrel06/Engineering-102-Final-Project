@@ -1,28 +1,19 @@
 #include <Wire.h>
 #include "RTClib.h"
-#include <SoftwareSerial.h>
-#include "DFRobotDFPlayerMini.h"
 
-// RTC and MP3 module setup
+// RTC module setup
 RTC_DS3231 rtc;
-SoftwareSerial mySoftwareSerial(10, 11); // RX, TX for DFPlayer
-DFRobotDFPlayerMini myDFPlayer;
 
 const int pressureSensorPins[] = {A0, A1, A2}; // Pressure sensor pins
 DateTime classStartTimes[3];  // Store start times for each class
 bool checksDone[3] = {false, false, false};  // Flags to ensure each check is done once
+const int speakerPin = 9; // Speaker pin
 
 void setup() {
   Serial.begin(9600);
-  mySoftwareSerial.begin(9600);
   rtc.begin();
-
-  // Initialize the MP3 player
-  if (!myDFPlayer.begin(mySoftwareSerial)) {
-    Serial.println("MP3 player initialization failed!");
-    while (true);
-  }
-  myDFPlayer.volume(10);
+  
+  pinMode(speakerPin, OUTPUT); // Initialize speaker pin as output
 
   // Initialize sensor pins
   for (int i = 0; i < 3; i++) {
@@ -43,10 +34,19 @@ void loop() {
       checksDone[i] = true; // Set the flag to true to avoid repeated checks
       int sensorValue = analogRead(pressureSensorPins[i]);
       if (sensorValue < threshold) {  // Threshold to be determined based on your sensor calibration
-        myDFPlayer.play(i + 1);  // Play specific MP3 file (001.mp3, 002.mp3, 003.mp3)
+        beep(i + 1);  // Beep n times where n is the sensor number (1, 2, or 3)
+        delay(2000); // wait for 2 seconds between slots
       }
     }
   }
 
   delay(10000);  // Delay for reducing processing load
+}
+
+void beep(int count) {
+  for (int i = 0; i < count; i++) {
+    tone(speakerPin, 1000, 200); // Generate a 1000Hz tone for 200ms
+    delay(400); // Wait for 400ms between beeps
+  }
+  noTone(speakerPin); // Ensure no tone is being played after the sequence
 }
