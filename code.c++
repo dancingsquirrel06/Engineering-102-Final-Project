@@ -46,7 +46,7 @@ void loop() {
 void beep(int count) {
   for (int i = 0; i < count; i++) {
     tone(speakerPin, 1000, 200); // Generate a 1000Hz tone for 200ms
-    delay(400); // Wait for 400ms between beeps
+    delay(600); // Wait for 600ms between beeps
   }
   noTone(speakerPin); // Ensure no tone is being played after the sequence
 }
