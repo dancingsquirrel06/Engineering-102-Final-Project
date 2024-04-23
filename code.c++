@@ -8,9 +8,9 @@ RTC_DS3231 rtc;
 SoftwareSerial mySoftwareSerial(10, 11); // RX, TX for DFPlayer
 DFRobotDFPlayerMini myDFPlayer;
 
-const int pressureSensorPins[] = {A0, A1, A2}; // Pressure sensor pins
-DateTime classStartTimes[3];  // Store start times for each class
-bool checksDone[3] = {false, false, false};  // Flags to ensure each check is done once
+const int pressureSensorPin = A0; // Only one pressure sensor pin
+DateTime classStartTime;  // Store start time for the class
+bool checkDone = false;  // Flag to ensure the check is done once
 
 void setup() {
   Serial.begin(9600);
@@ -24,29 +24,23 @@ void setup() {
   }
   myDFPlayer.volume(10);
 
-  // Initialize sensor pins
-  for (int i = 0; i < 3; i++) {
-    pinMode(pressureSensorPins[i], INPUT);
-  }
+  // Initialize sensor pin
+  pinMode(pressureSensorPin, INPUT);
 
-  // Example start times (You would set these based on actual class start times)
-  classStartTimes[0] = rtc.now();  // Current time, for testing purposes
-  classStartTimes[1] = rtc.now();  // Plus some offset if necessary
-  classStartTimes[2] = rtc.now();  // Plus some offset if necessary
+  // Example start time (You would set this based on the actual class start time)
+  classStartTime = rtc.now();  // Set to current time for testing purposes
 }
 
 void loop() {
   DateTime now = rtc.now();
   
-  for (int i = 0; i < 3; i++) {
-    if (!checksDone[i] && now.unixtime() > classStartTimes[i].unixtime() + 300) { // 300 seconds after class starts
-      checksDone[i] = true; // Set the flag to true to avoid repeated checks
-      int sensorValue = analogRead(pressureSensorPins[i]);
-      if (sensorValue < threshold) {  // Threshold to be determined based on your sensor calibration
-        myDFPlayer.play(i + 1);  // Play specific MP3 file (001.mp3, 002.mp3, 003.mp3)
-      }
+  if (!checkDone && now.unixtime() > classStartTime.unixtime() + 300) { // 300 seconds after class starts
+    checkDone = true; // Set the flag to true to avoid repeated checks
+    int sensorValue = analogRead(pressureSensorPin);
+    if (sensorValue < threshold) {  // Threshold to be determined based on your sensor calibration
+      myDFPlayer.play(1);  // Play the specific MP3 file (001.mp3)
     }
   }
 
-  delay(10000);  // Delay for reducing processing load
+  delay(10000);
 }
