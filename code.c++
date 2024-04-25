@@ -9,8 +9,7 @@ SoftwareSerial mySoftwareSerial(10, 11); // RX, TX for DFPlayer
 DFRobotDFPlayerMini myDFPlayer;
 
 const int pressureSensorPin = A0; // Only one pressure sensor pin
-DateTime classStartTime;  // Store start time for the class
-bool checkDone = false;  // Flag to ensure the check is done once
+bool alreadyChecked = false; // Flag to avoid multiple checks at the same minute
 
 void setup() {
   Serial.begin(9600);
@@ -26,21 +25,23 @@ void setup() {
 
   // Initialize sensor pin
   pinMode(pressureSensorPin, INPUT);
-
-  // Example start time (You would set this based on the actual class start time)
-  classStartTime = rtc.now();  // Set to current time for testing purposes
 }
 
 void loop() {
-  DateTime now = rtc.now();
+  DateTime now = rtc.now(); // Get the current date and time
   
-  if (!checkDone && now.unixtime() > classStartTime.unixtime() + 300) { // 300 seconds after class starts
-    checkDone = true; // Set the flag to true to avoid repeated checks
-    int sensorValue = analogRead(pressureSensorPin);
-    if (sensorValue < threshold) {  // Threshold to be determined based on your sensor calibration
-      myDFPlayer.play(1);  // Play the specific MP3 file (001.mp3)
+  // Check if today is Tuesday (2) or Thursday (4) and the time is 9:35 AM
+  if ((now.dayOfTheWeek() == 2 || now.dayOfTheWeek() == 4) && now.hour() == 9 && now.minute() == 40) {
+    if (!alreadyChecked) {
+      alreadyChecked = true; // Set flag to true after the check
+      int sensorValue = analogRead(pressureSensorPin);
+      if (sensorValue < threshold) {  // Assuming a threshold to determine if a phone is present
+        myDFPlayer.play(1);  // Play the specific MP3 file (001.mp3)
+      }
     }
+  } else {
+    alreadyChecked = false; // Reset flag if it is not the correct time
   }
 
-  delay(10000);
+  delay(10000);  // Delay for reducing processing load
 }
