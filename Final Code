@@ -24,14 +24,14 @@ void setup() {
   myRTC.begin();
 
   // Initialize the MP3 player
-  //if (!myDFPlayer.begin(mySoftwareSerial)) {
-    //Serial.println("MP3 player initialization failed!");
-    //while (true);
-  //}
-  //myDFPlayer.volume(10);
+  if (!myDFPlayer.begin(mySoftwareSerial)) {
+    Serial.println("MP3 player initialization failed!");
+    while (true);
+  }
+  myDFPlayer.volume(10);
 
   // Initialize sensor pin
-  //pinMode(pressureSensorPin, INPUT);
+  pinMode(pressureSensorPin, INPUT);
 
   // Synchronize Time library with RTC
   setSyncProvider(myRTC.get);
