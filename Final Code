@@ -24,9 +24,10 @@ void setup() {
   myRTC.begin();
 
   // Initialize the MP3 player
-  if (!myDFPlayer.begin(mySoftwareSerial)) {
-    Serial.println("MP3 player initialization failed!");
-    while (true);
+  myDFPlayer.setTimeOut(1000);  
+  if (!myDFPlayer.begin(mySoftwareSerial, false)) {
+      Serial.println("MP3 player initialization failed!");
+      while (true);
   }
   myDFPlayer.volume(10);
 
