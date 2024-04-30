@@ -15,7 +15,7 @@ DFRobotDFPlayerMini myDFPlayer;
 
 const int pressureSensorPin = A0; // Only one pressure sensor pin
 bool alreadyChecked = false; // Flag to avoid multiple checks at the same minute
-int threshold = 500; // Placeholder for threshold value
+int threshold = 60; // Placeholder for threshold value
 
 void setup() {
   Serial.begin(115200);
@@ -29,7 +29,7 @@ void setup() {
       Serial.println("MP3 player initialization failed!");
       while (true);
   }
-  myDFPlayer.volume(10);
+  myDFPlayer.volume(30);
 
   // Initialize sensor pin
   pinMode(pressureSensorPin, INPUT);
@@ -61,7 +61,7 @@ void loop() {
     Serial.println();
   }
 
-  delay(10000);  // Delay for reducing processing load
+  delay(5000);  // Delay for reducing processing load
 }
 
 time_t dateTimeToTimeT(DateTime dt) {
@@ -100,15 +100,16 @@ void setRTCFromSerial(tmElements_t &tm) {
 }
 
 void checkAndPlayAlert(DateTime now) {
-  if ((now.dayOfTheWeek() == 2 || now.dayOfTheWeek() == 4) && now.hour() == 9 && now.minute() == 40) {
+  //if ((now.dayOfTheWeek() == 2 || now.dayOfTheWeek() == 4) && now.hour() == 9 && now.minute() == 40) {
     if (!alreadyChecked) {
       alreadyChecked = true;
       int sensorValue = analogRead(pressureSensorPin);
+      Serial.println(sensorValue);
       if (sensorValue > threshold) {
         myDFPlayer.play(1);
       }
     }
-  } else {
+ else {
     alreadyChecked = false;
   }
 }
