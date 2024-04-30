@@ -18,9 +18,9 @@ bool alreadyChecked = false; // Flag to avoid multiple checks at the same minute
 int threshold = 60; // Placeholder for threshold value
 
 void setup() {
-  Serial.begin(115200);
-  mySoftwareSerial.begin(9600);
-  rtc.begin();
+  Serial.begin(115200); //starts the main Serial (code begins)
+  mySoftwareSerial.begin(9600); //seperate serial for debugging. Is not used in the final product
+  rtc.begin(); //Initializes the RTC
   myRTC.begin();
 
   // Initialize the MP3 player
@@ -41,7 +41,7 @@ void setup() {
 
 void loop() {
   DateTime now = rtc.now(); // Get the current date and time
-  time_t t = dateTimeToTimeT(now);
+  time_t t = dateTimeToTimeT(now); // Gets constantly redefined
 
   tmElements_t tm;
 
@@ -61,7 +61,7 @@ void loop() {
     Serial.println();
   }
 
-  delay(5000);  // Delay for reducing processing load
+  delay(5000);  // Delay for reducing processing load (5 seconds)
 }
 
 time_t dateTimeToTimeT(DateTime dt) {
