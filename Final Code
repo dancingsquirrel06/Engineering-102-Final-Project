@@ -62,7 +62,7 @@ void loop() {
   }
 
   // Execute on Tuesdays and Thursdays at 9:40 AM
-  if ((weekday(t) == 3 || weekday(t) == 5) && hour(t) == 9 && minute(t) == 40) {
+  //if ((weekday(t) == 3 || weekday(t) == 5) && hour(t) == 9 && minute(t) == 40) {
     if (!alreadyChecked) {
       alreadyChecked = true;
       int sensorValue = analogRead(pressureSensorPin);
@@ -71,7 +71,8 @@ void loop() {
         myDFPlayer.play(1);
       }
     }
-  } else {
+  //} 
+  else {
     alreadyChecked = false;
   }
   delay(5000);
